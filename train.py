@@ -100,7 +100,7 @@ logger.info(args)
 
 # Setting Loss
 exec('from loss import ' + args.loss)
-dsloss = eval(args.loss+'()')
+sloss = eval(args.loss+'()')
 
 
 def main():
@@ -157,7 +157,7 @@ def train(epoch, train_loader):
     model.set_mode('train')
     
     FL = PTL.BinaryFocalLoss()
-    cor = correlation()
+    
 
     for batch_idx, batch in enumerate(train_loader):
         inputs = batch[0].to(device).squeeze(0)
@@ -165,14 +165,11 @@ def train(epoch, train_loader):
         cls_gts = torch.LongTensor(batch[-1]).to(device)
         
         
-        gts_neg = torch.full_like(gts, 0.0)
-        gts_cat = torch.cat([gts, gts_neg], dim=0)
-        
         
         scaled_preds = model(inputs)
         
 
-        loss_sal = dsloss(scaled_preds, gts)
+        loss_sal = sloss(scaled_preds, gts)
         
         loss = loss_sal
 
