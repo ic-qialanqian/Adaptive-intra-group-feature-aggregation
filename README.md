@@ -4,7 +4,7 @@ The official repo of the ICASSP 2022 paper [Adaptive Intra-Group Aggregation for
 
 ## Data Format
 
-  Put the [DUTS_class (training dataset from GICD)](https://drive.google.com/file/d/1Ej6FKifpRi1bx09I0r7D6MO-GI8SDu_M/view?usp=sharing), [CoCA](http://zhaozhang.net/coca.html), [CoSOD3k](http://dpfan.net/CoSOD3K/) and [Cosal2015]() datasets to `GCoNet/data` as the following structure:
+  Put the [DUTS_class (training dataset from GICD)](https://drive.google.com/file/d/1Ej6FKifpRi1bx09I0r7D6MO-GI8SDu_M/view?usp=sharing), [CoCA](http://zhaozhang.net/coca.html), [CoSOD3k](http://dpfan.net/CoSOD3K/) and [Cosal2015]() datasets to `./data` as the following structure:
   ```
   AIGANet
      ├── other codes
