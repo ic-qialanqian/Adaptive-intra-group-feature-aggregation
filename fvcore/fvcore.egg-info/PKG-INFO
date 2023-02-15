@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: fvcore
+Version: 0.1.3
+Summary: Collection of common code shared among different research projects in FAIR computer vision team
+Home-page: https://github.com/facebookresearch/fvcore
+Author: FAIR
+License: Apache 2.0
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires-Python: >=3.6
+Provides-Extra: all

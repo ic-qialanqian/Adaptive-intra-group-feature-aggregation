@@ -1,0 +1,11 @@
+numpy
+yacs>=0.1.6
+pyyaml>=5.1
+tqdm
+termcolor>=1.1
+Pillow
+tabulate
+iopath>=0.1.2
+
+[all]
+shapely
