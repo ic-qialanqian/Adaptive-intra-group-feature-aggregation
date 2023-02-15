@@ -18,11 +18,11 @@ import pytorch_toolbelt.losses as PTL
 # Parameter from command line
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--model',
-                    default='CoSalNet',
+                    default='AIGANet',
                     type=str,
                     help="Options: '', ''")
 parser.add_argument('--loss',
-                    default='DSLoss_IoU',
+                    default='Scale_loss',
                     type=str,
                     help="Options: '', ''")
 parser.add_argument('--bs', '--batch_size', default=16, type=int)
@@ -99,7 +99,6 @@ logger.info("Other hyperparameters:")
 logger.info(args)
 
 # Setting Loss
-#exec('from loss_ori import ' + args.loss)
 exec('from loss import ' + args.loss)
 dsloss = eval(args.loss+'()')
 
@@ -156,7 +155,7 @@ def train(epoch, train_loader):
     # Switch to train mode
     model.train()
     model.set_mode('train')
-    #CE = torch.nn.BCEWithLogitsLoss()
+    
     FL = PTL.BinaryFocalLoss()
     cor = correlation()
 
@@ -164,27 +163,18 @@ def train(epoch, train_loader):
         inputs = batch[0].to(device).squeeze(0)
         gts = batch[1].to(device).squeeze(0)
         cls_gts = torch.LongTensor(batch[-1]).to(device)
-        #print(cls_gts.shape)
-        #print(cls_gts[0],cls_gts[-1])
+        
         
         gts_neg = torch.full_like(gts, 0.0)
         gts_cat = torch.cat([gts, gts_neg], dim=0)
         
-        #scaled_preds, pred_cls, pred_x5 = model(inputs)
-        scaled_preds, x_group1,x_group2 = model(inputs)
-        #scaled_preds = model(inputs)
+        
+        scaled_preds = model(inputs)
         
 
-        loss_sal,beta1,beta2 = dsloss(scaled_preds, gts)
-        #loss_sal = dsloss(scaled_preds, gts)
-        #print(theta1)
-        #print(theta2)
-        #loss_group = cor(x_group1,x_group2)*10
+        loss_sal = dsloss(scaled_preds, gts)
         
-        #loss_cls = F.cross_entropy(pred_cls, cls_gts) * 3.0
-        #loss_x5 = FL(pred_x5, gts)*250
-        #print(loss_x5)
-        loss = loss_sal # + loss_x5
+        loss = loss_sal
 
         loss_log.update(loss, inputs.size(0))
 
@@ -195,21 +185,18 @@ def train(epoch, train_loader):
         if batch_idx % 20 == 0:
             # NOTE: Top2Down; [0] is the grobal slamap and [5] is the final output
             logger.info('Epoch[{0}/{1}] Iter[{2}/{3}]  '
-                        'Train Loss: loss_sal: {4:.3f} S1: {5:.3f} S2: {6:.3f} '
+                        'Train Loss: loss_sal: {4:.3f}  '
                         'Loss_total: {loss.val:.3f} ({loss.avg:.3f})  '.format(
                             epoch,
                             args.epochs,
                             batch_idx,
                             len(train_loader),
                             loss_sal,
-                            beta1,
-                            beta2,
-                            #theta2,
                             loss=loss_log,
                         ))
-            log = '[S1 %.5f], [S2 %.5f]'  % \
-                     (beta1, beta2)
-            open('/media/guangyu/csp1/projects/GCoNet/sizes_statistics.txt', 'a').write(log + '\n')
+            #log = '[S1 %.5f], [S2 %.5f]'  % \
+                     #(beta1, beta2)
+            #open('/media/guangyu/csp1/projects/GCoNet/sizes_statistics.txt', 'a').write(log + '\n')
     scheduler.step()
     logger.info('@==Final== Epoch[{0}/{1}]  '
                 'Train Loss: {loss.avg:.3f}  '.format(epoch,
