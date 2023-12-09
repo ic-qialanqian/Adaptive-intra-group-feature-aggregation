@@ -85,8 +85,6 @@ class div(nn.Module):
         x_single = F.normalize(x_single,p=2,dim=1)
         x_group = F.normalize(x_group,p=2,dim=1)
         
-        x_single2 = x_single.view(-1)
-        x_group2 = x_group.view(-1)
         
         
         feat_vec = torch.cat([x_single,x_group],0)
